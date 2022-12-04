@@ -6,49 +6,108 @@ const cantidadCarrito = document.getElementById("cantidadCarrito");
 
 let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-productos.forEach((product) => {
-  let content = document.createElement("div");
-  content.className = "card";
-  content.innerHTML = `
+shopContent.innerHTML =
+  '<img src="https://acegif.com/wp-content/uploads/loading-11.gif" width="400px">';
+
+const pedirProductos = () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(productos);
+    }, 3000);
+  });
+};
+
+let productosCargados = [];
+
+const renderProductos = (arr) => {
+  shopContent.innerHTML = "";
+  productos.forEach((product) => {
+    let content = document.createElement("div");
+    content.className = "card";
+    content.innerHTML = `
     <img src="${product.img}">
     <h3>${product.nombre}</h3>
     <p class="price">$${product.precio}</p>
   `;
 
-  shopContent.append(content);
+    shopContent.append(content);
 
-  let comprar = document.createElement("button");
-  comprar.innerText = "comprar";
-  comprar.className = "comprar";
+    let comprar = document.createElement("button");
+    comprar.innerText = "Agregar";
+    comprar.className = "comprar";
 
-  content.append(comprar);
+    content.append(comprar);
 
-  comprar.addEventListener("click", () => {
-    const repeat = carrito.some((repeatProduct) => repeatProduct.id === product.id);
+    comprar.addEventListener("click", () => {
+      const repeat = carrito.some(
+        (repeatProduct) => repeatProduct.id === product.id
+      );
 
-    if (repeat) {
-      carrito.map((prod) => {
-        if (prod.id === product.id) {
-          prod.cantidad++;
-        }
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
       });
-    } else {
-      carrito.push({
-        id: product.id,
-        img: product.img,
-        nombre: product.nombre,
-        precio: product.precio,
-        cantidad: product.cantidad,
+
+      Toast.fire({
+        icon: "success",
+        title: "Producto agregado",
       });
-      console.log(carrito);
-      console.log(carrito.length);
-      carritoCounter();
-      saveLocal();
-    }
+
+      if (repeat) {
+        carrito.map((prod) => {
+          if (prod.id === product.id) {
+            prod.cantidad++;
+          }
+        });
+      } else {
+        carrito.push({
+          id: product.id,
+          img: product.img,
+          nombre: product.nombre,
+          precio: product.precio,
+          cantidad: product.cantidad,
+        });
+        console.log(carrito);
+        console.log(carrito.length);
+        carritoCounter();
+        saveLocal();
+      }
+    });
   });
-});
+};
 
+pedirProductos()
+  .then((res) => {
+    productosCargados = res;
+    renderProductos(productosCargados);
+  })
+
+  .catch(() => {
+    console.log("paso algo raro");
+  });
 
 const saveLocal = () => {
   localStorage.setItem("carrito", JSON.stringify(carrito));
 };
+
+// API
+const urlUsuarios = "https://jsonplaceholder.typicode.com/users";
+const usuarios = document.getElementById("usuarios");
+
+fetch(urlUsuarios)
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+    data.forEach((usuario) => {
+      const li = document.createElement("li");
+      li.innerHTML = usuario.name + "<br>Telefono: " + usuario.phone;
+      usuarios.append(li);
+    });
+  });

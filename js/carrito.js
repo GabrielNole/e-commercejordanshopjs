@@ -4,7 +4,7 @@ const pintarCarrito = () => {
     const modalHeader = document.createElement("div");
     modalHeader.className = "modal-header";
     modalHeader.innerHTML = `
-        <h1 class="modal-header-title">Carrito.</h1>
+        <h1 class="modal-header-title">Carrito</h1>
       `;
     modalContainer.append(modalHeader);
   
@@ -55,9 +55,25 @@ const pintarCarrito = () => {
       let eliminar = carritoContent.querySelector(".delete-product");
   
       eliminar.addEventListener("click", () => {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        })
+        
+        Toast.fire({
+          icon: 'success',
+          title: 'Producto eliminado'
+        })
         eliminarProducto(product.id);
       });
-  
+      
     });
   
     const total = carrito.reduce((acc, el) => acc + el.precio * el.cantidad, 0);
