@@ -26,7 +26,6 @@ const pintarCarrito = () => {
           <h3>${product.nombre}</h3>
           <p>$${product.precio}</p>
           <span class="restar"> - </span>
-          <!--recomiendo no escribir la palabra cantidad para que no quede tan largo :)-->
           <p>${product.cantidad}</p>
           <span class="sumar"> + </span>
           <p>Total: $${product.cantidad * product.precio}</p>
@@ -82,6 +81,21 @@ const pintarCarrito = () => {
     totalBuying.className = "total-content";
     totalBuying.innerHTML = `Total a pagar: ${total} $`;
     modalContainer.append(totalBuying);
+    
+    const accionComprar = document.createElement("button");
+    accionComprar.className = "accion-comprar";
+    accionComprar.innerText = "Realizar compra"
+    modalContainer.append(accionComprar);
+
+    accionComprar.addEventListener("click", ()=> {
+      Swal.fire({
+        title: 'Compra realizada con éxito!',
+        imageUrl: 'https://st4.depositphotos.com/17601448/23584/v/450/depositphotos_235847954-stock-illustration-happy-face-banner-with-smile.jpg',
+        imageWidth: 200,
+        imageHeight: 200,
+        imageAlt: 'Custom image',
+      })
+    })
   };
   
   verCarrito.addEventListener("click", pintarCarrito);
@@ -111,3 +125,4 @@ const pintarCarrito = () => {
   };
   
   carritoCounter();
+
